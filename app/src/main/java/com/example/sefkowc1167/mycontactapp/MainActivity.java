@@ -1,5 +1,6 @@
 package com.example.sefkowc1167.mycontactapp;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -50,13 +51,17 @@ public class MainActivity extends AppCompatActivity {
             showMessage("Error", "no data found in database");
         }
 
-        StringBuffer buffer = new StringBuffer();
-        while (res.moveToNext()) {
-            //append res column 0,1,2,3 to buffer, delimited by "\n"
-            //TODO
+        StringBuffer sb = new StringBuffer();
+        while(res.moveToNext()) {
+            // append res column 0,1,2,3 to buffer; delimit "appends" w "\n"
+            for (int i = 0; i < 4; i++) {
+                sb.append(res.getColumnName(i) + ": " + res.getString(i) + "\n");
+            }
+            sb.append("\n");
         }
         Log.d("MyContactApp", "MainActivity: assembled StringBuffer");
-        showMessage("Data", buffer.toString());
+        showMessage("Data", sb.toString());
+        Log.d("MyContactApp", "MainActivity: displaying contacts");
     }
 
     public void showMessage(String title, String message) {
@@ -68,4 +73,13 @@ public class MainActivity extends AppCompatActivity {
         builder.setMessage(message);
         builder.show();
     }
+
+    public static final String EXTRA_MESSAGE = "com.example.sefkowc1167.mycontactapp.MESSAGE";
+    public void SearchRecord(View view) {
+        Log.d("MyContactApp", "MainActivity: entered SearchRecord");
+        Intent intent = new Intent(this, SearchActivity.class);
+        intent.putExtra(EXTRA_MESSAGE, editName.getText().toString());
+        startActivity(intent);
+    }
+
 }
