@@ -12,10 +12,10 @@ import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
-    DatabaseHelper myDb;
-    EditText editName;
-    EditText editAddress;
-    EditText editPhone;
+    public static DatabaseHelper myDb;
+    public EditText editName;
+    public EditText editAddress;
+    public EditText editPhone;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,8 +78,33 @@ public class MainActivity extends AppCompatActivity {
     public void SearchRecord(View view) {
         Log.d("MyContactApp", "MainActivity: entered SearchRecord");
         Intent intent = new Intent(this, SearchActivity.class);
-        intent.putExtra(EXTRA_MESSAGE, editName.getText().toString());
+        intent.putExtra(EXTRA_MESSAGE, getRecords());
         startActivity(intent);
+    }
+
+    private String getRecords() {
+        Cursor res = myDb.getAllData();
+        Log.d("MyContactApp", "MainActivity: getRecords: received cursor");
+        StringBuffer sb = new StringBuffer();
+        int counter = 0;
+        while (res.moveToNext()) {
+            if (res.getString(1).equals(editName.getText().toString())) {
+                for (int i = 1; i < 4; i++) {
+                    sb.append(res.getColumnName(i) + ": " + res.getString(i) + "\n");
+                }
+                sb.append("\n");
+                counter++;
+            }
+        }
+
+        if (counter == 0) {
+            return "No entries found: " + editName.getText().toString() + "'";
+        } else {
+            String name = editName.getText().toString();
+            if (name.equals("")) name = " ";
+            sb.insert(0, counter + " entries found: " + name + "\n");
+            return sb.toString();
+        }
     }
 
 }
