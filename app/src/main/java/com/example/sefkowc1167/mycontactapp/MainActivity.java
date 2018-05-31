@@ -78,31 +78,39 @@ public class MainActivity extends AppCompatActivity {
     public void SearchRecord(View view) {
         Log.d("MyContactApp", "MainActivity: entered SearchRecord");
         Intent intent = new Intent(this, SearchActivity.class);
-        intent.putExtra(EXTRA_MESSAGE, getRecords());
+        intent.putExtra(EXTRA_MESSAGE, searchDb());
         startActivity(intent);
     }
 
-    private String getRecords() {
+    private String searchDb() {
         Cursor res = myDb.getAllData();
-        Log.d("MyContactApp", "MainActivity: getRecords: received cursor");
+        Log.d("MyContactApp", "MainActivity: entered searchDb");
         StringBuffer sb = new StringBuffer();
-        int counter = 0;
+        int x = 0;
+
+        // iterate through the db
         while (res.moveToNext()) {
+            // if the name in the db is the same as the name in the edit field add it to the string
             if (res.getString(1).equals(editName.getText().toString())) {
                 for (int i = 1; i < 4; i++) {
                     sb.append(res.getColumnName(i) + ": " + res.getString(i) + "\n");
                 }
                 sb.append("\n");
-                counter++;
+                x++;
             }
         }
 
-        if (counter == 0) {
-            return "No entries found: " + editName.getText().toString() + "'";
+        // nothing found
+        if (x == 0) {
+            return "No entries found.";
         } else {
+            // otherwise return the info
             String name = editName.getText().toString();
-            if (name.equals("")) name = " ";
-            sb.insert(0, counter + " entries found: " + name + "\n");
+            if (name.equals("")) {
+                // Prevent empty string error
+                name = " ";
+            }
+            sb.insert(0, x + " entries found.");
             return sb.toString();
         }
     }
