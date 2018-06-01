@@ -110,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
                 // Prevent empty string error
                 name = " ";
             }
-            sb.insert(0, x + " entries found.");
+            sb.insert(0, x + " entries found.\n");
             return sb.toString();
         }
     }
